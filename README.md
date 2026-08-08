@@ -1,21 +1,21 @@
 # 📦 Demand & Replenishment Console
 
-### From reactive inventory reporting to proactive replenishment decisions.
+### From inventory reporting to proactive replenishment decisions.
 
-A Power BI supply chain analytics solution designed to separate **demand planning** from **day-to-day inventory execution**.
+A Power BI supply chain analytics solution designed to separate **demand planning** from **day-to-day replenishment decisions**.
 
-The project combines demand analysis, forecasting, inventory monitoring, ABC classification, and replenishment logic into a focused decision-support application.
+The project transforms retail inventory and demand data into a decision-support application that helps planners understand demand and inventory behavior while giving buyers a focused view of what needs to be reordered and how much to order.
 
 ---
 
-## 🎯 Business Problem
+## 🎯 The Business Problem
 
-Supply chain teams often use the same reporting interface for two fundamentally different tasks:
+Supply chain teams often use the same reporting interface for two fundamentally different activities:
 
 - Long-term demand planning
 - Daily procurement and replenishment
 
-Combining both creates what I call a **"Dashboard Identity Crisis"** — too much information for planners, not enough focus for buyers, and unnecessary cognitive load for operational teams.
+Combining these workflows can create what I call a **"Dashboard Identity Crisis"** — too much information for planners, insufficient focus for buyers, and unnecessary cognitive load for operational teams.
 
 This can contribute to:
 
@@ -26,89 +26,104 @@ This can contribute to:
 - Manual procurement calculations
 - Difficulty identifying priority SKUs
 
-The objective was not simply to build another dashboard.
+The goal of this project was therefore not simply to build another dashboard.
 
-It was to design an analytical workflow that helps answer:
+It was to design a workflow that answers three increasingly important questions:
 
 > **What is happening? → What is likely to happen? → What should we do next?**
 
 ---
 
-# 💡 Solution
+# 💡 The Solution
 
-I designed a **dual-module Power BI application** that physically separates strategic demand analysis from operational replenishment.
+I designed a **dual-module Power BI application** that separates strategic demand analysis from operational replenishment.
 
-### Module 1 — Demand Analysis
+```text
+                    SUPPLY CHAIN ANALYTICS
+                            │
+             ┌──────────────┴──────────────┐
+             │                             │
+       DEMAND PLANNING               REPLENISHMENT
+             │                             │
+      Understand demand               Take action
+             │                             │
+   Forecast • ABC • Trends       ROP • Safety Stock
+                                 Suggested Order Qty
+             │                             │
+             └──────────────┬──────────────┘
+                            ↓
+                 BETTER INVENTORY DECISIONS
+```
 
-Focused on understanding demand behavior and inventory performance.
+### Module 1 — Demand Planning
 
-### Module 2 — Replenishment & Ordering
+Focused on understanding demand behavior, inventory coverage, product priorities, and forecast performance.
 
-Focused on translating inventory conditions into actionable procurement decisions.
+### Module 2 — Replenishment Console
+
+Focused on converting inventory conditions into actionable procurement decisions.
 
 ---
 
-# 📊 Demand Analysis Overview
+# 📊 Demand Planning
 
 ![Demand Analysis Overview](assets/demand-analysis-overview.png)
 
-The Demand Analysis module provides a high-level view of:
+The Demand Planning module provides a focused view of:
 
 - Current inventory
 - Average daily sales
 - Days of supply
-- Forecast accuracy
-- Sales vs. inventory trends
+- Forecast performance
+- Sales and inventory trends
 - Regional inventory coverage
 - Forecast variance
 - SKU-level demand classification
 
-### Key analytical features
+### Dynamic ABC Analysis
 
-**Dynamic ABC Analysis**
+Products are dynamically classified according to their cumulative revenue contribution.
 
-Products are classified based on cumulative revenue contribution to help prioritize high-value SKUs.
+This helps prioritize high-value products and focus inventory management efforts where they have the greatest financial impact.
 
-**Demand Forecasting**
+### Demand Forecasting
 
 A lightweight forecasting approach provides a forward-looking demand signal while maintaining visibility into forecast variance.
 
-**Forecast Guardrails**
+### Forecast Guardrails
 
-The dashboard highlights significant deviations between forecasted and actual demand to help identify potential overstock or demand deterioration.
+The analysis highlights deviations between forecasted and actual demand, helping identify products that may require additional attention.
 
-**Inventory Coverage**
+### Inventory Coverage
 
 Days of Supply provides visibility into how long current inventory can support expected demand.
 
 ---
 
-# 🔄 Replenishment & Ordering
+# 🔄 Replenishment Console
 
-![Inventory Replenishment Console](assets/replenishment-console.png)
+![Replenishment Console](assets/replenishment-console.png)
 
-The second module converts inventory analysis into procurement actions.
+The Replenishment Console translates inventory analysis into procurement actions.
 
-### Key metrics
+### Key Decision Metrics
 
 - Total Inventory Value
 - SKUs to Reorder
 - Critical SKUs
 - Suggested Order Capital
 
-### Replenishment logic
+### Reorder Point
 
-The console calculates:
+The model calculates a reorder threshold based on expected demand during lead time and safety stock:
 
-**Reorder Point**
+> **ROP = Demand During Lead Time + Safety Stock**
 
-> Reorder Point = Demand During Lead Time + Safety Stock
+### Suggested Order Quantity
 
-**Suggested Order Quantity**
+The model compares the current inventory position against the replenishment requirement and generates a suggested order quantity.
 
-The model compares current inventory against the calculated replenishment threshold and generates a suggested quantity to order.
-
-The result is a buyer-focused view that moves the process away from manual purchasing calculations.
+This provides buyers with an action-oriented view instead of requiring them to manually calculate replenishment quantities.
 
 ---
 
@@ -116,37 +131,31 @@ The result is a buyer-focused view that moves the process away from manual purch
 
 ![Power BI Data Model](assets/data-model.png)
 
-The analytical model uses a structured dimensional architecture connecting:
-
-- Product
-- Store
-- Calendar
-- Sales
-- Inventory
-
-The model separates dimensions from transactional data to support reusable measures, consistent filtering, and scalable Power BI analysis.
+The solution uses a structured analytical model connecting key retail and inventory entities.
 
 ### Core model components
 
 | Component | Purpose |
 |---|---|
 | `dim_Product` | Product attributes and classification |
-| `dim_Store` | Store-level analysis |
+| `dim_Store` | Store and regional analysis |
 | `dim_Calendar` | Time intelligence |
-| `fct_Sales_Inventory` | Historical sales and inventory transactions |
+| Sales / Inventory fact data | Historical operational activity |
 | Measures | Centralized analytical calculations |
+
+The model was designed to support consistent filtering, reusable measures, and reliable analytical calculations across the application.
 
 ---
 
 # ⚙️ Technical Implementation
 
-### Power BI
+## Power BI
 
-Used as the primary analytical and visualization platform.
+Used as the primary analytical and visualization platform for the complete solution.
 
-### DAX
+## DAX
 
-Developed measures for:
+Developed analytical logic for:
 
 - Demand calculations
 - Average daily sales
@@ -158,7 +167,11 @@ Developed measures for:
 - Days of Supply
 - Variance analysis
 
-### Power Query
+Key DAX techniques included:
+
+`SWITCH(TRUE())` · `DATEADD()` · `COUNTROWS()`
+
+## Power Query
 
 Used for:
 
@@ -166,18 +179,19 @@ Used for:
 - Transformation
 - Data preparation
 - Handling inconsistent source values
+- Preparing analytical tables
 
-### Data Modeling
+## Data Modeling
 
-Designed relationships between dimensions and fact data to provide reliable filtering and reusable analytical logic.
+Designed relationships between dimensions and fact data to provide consistent filtering and reusable analytical logic.
 
 ---
 
 # 🛡️ Data Quality & Reliability
 
-Real-world ERP data is rarely perfect.
+Analytical models are only useful when the underlying calculations can be trusted.
 
-The model includes safeguards for problematic values such as:
+The solution includes safeguards for problematic source values such as:
 
 - Blank revenue
 - Null values
@@ -185,25 +199,25 @@ The model includes safeguards for problematic values such as:
 - Missing demand
 - Zero-demand scenarios
 
-These safeguards prevent misleading KPIs and calculation errors from propagating into decision-making.
+These safeguards help prevent misleading KPIs and calculation errors from flowing into decision-making.
 
 ---
 
 # 📈 Business Value
 
-The solution shifts the workflow from:
+The project shifts the workflow from:
 
 ### Reactive Reporting
 
-> "What happened?"
+> **"What happened?"**
 
 to:
 
 ### Proactive Decision Support
 
-> "What should we do next?"
+> **"What should we do next?"**
 
-The resulting workflow helps:
+The solution helps:
 
 - Reduce manual purchasing guesswork
 - Identify critical inventory risks
@@ -211,37 +225,79 @@ The resulting workflow helps:
 - Improve visibility into inventory coverage
 - Balance stockout risk against excess inventory
 - Support more disciplined procurement decisions
+- Reduce cognitive load by separating planning from execution
+
+---
+
+# 🔍 Key Takeaway
+
+The core idea behind this project is simple:
+
+> **Good analytics should not only explain the business. It should help the business decide what to do next.**
+
+The project demonstrates how Power BI can move beyond descriptive reporting and become an **operational decision-support tool**.
+
+---
+
+# 📁 Project Files
+
+### Power BI Application
+
+The complete Power BI project is available here:
+
+**[Open the Power BI file](powerbi/Retail-Inventory-Demand-Planning.pbix)**
+
+The PBIX file contains the data model, Power Query transformations, DAX measures, calculations, and dashboard experience presented in this case study.
+
+### Documentation
+
+- [Methodology](documentation/methodology.md)
+- [Data Source & Attribution](documentation/data-source.md)
+
+---
+
+# 📚 Data Source
+
+This project uses the **Retail Store Inventory and Demand Forecasting** dataset published on Kaggle by **Wavelet**.
+
+The dataset is synthetically generated and was used for educational and portfolio purposes.
+
+**License:** Apache License 2.0
+
+[View the original dataset on Kaggle](https://www.kaggle.com/datasets/atomicd/retail-store-inventory-and-demand-forecasting/data)
+
+For dataset details, attribution, and licensing information, see:
+
+**[Data Source & Attribution](documentation/data-source.md)**
 
 ---
 
 # 🧰 Tools & Technologies
 
-- **Power BI**
-- **DAX**
-- **Power Query**
-- **Data Modeling**
-- **Excel**
-- **Supply Chain Analytics**
-- **Inventory Planning**
-- **Procurement Analytics**
+**Analytics & BI**
+
+`Power BI` `DAX` `Power Query` `Data Modeling`
+
+**Data & Analysis**
+
+`Excel` `SQL` `Python` `Pandas`
+
+**Business Domain**
+
+`Supply Chain Analytics` `Inventory Planning` `Demand Analysis` `Procurement Analytics`
 
 ---
 
-# 📁 Project Structure
+# 👤 About Me
 
-```text
-demand-replenishment-console/
-│
-├── README.md
-│
-├── assets/
-│   ├── demand-analysis-overview.png
-│   ├── replenishment-console.png
-│   └── data-model.png
-│
-├── documentation/
-│   ├── methodology.md
-│   └── data-source.md
-│
-└── powerbi/
-    └── Demand-Replenishment-Console.pbix
+I'm **Omar Alkhulaidi**, a Data Analyst focused on **Business & Operations Analytics**.
+
+I build practical analytics solutions that turn operational data into clear insights, reliable KPIs, and better business decisions.
+
+My interests include Business Intelligence, Operations Analytics, Supply Chain Analytics, and decision-support solutions.
+
+### Connect
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Omar%20Alkhulaidi-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/omar-alkhulaidi/)
+
+[![GitHub](https://img.shields.io/badge/GitHub-Omar--Alkhulaidi-black?style=flat-square&logo=github)](https://github.com/Omar-Alkhulaidi)
