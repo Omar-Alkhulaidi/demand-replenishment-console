@@ -1,4 +1,4 @@
-# 📦 Demand & Replenishment Console
+# 📦 Predictive Demand Planning and Procurement Execution Analysis
 
 ### From inventory reporting to proactive replenishment decisions.
 
